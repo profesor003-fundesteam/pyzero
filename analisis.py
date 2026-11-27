@@ -29,9 +29,74 @@ def agrupar(
         agregacion: str = "conteo",
         top: int | None = 15,
 ) -> pd.DataFrame:
-    """Función que aplica la transformación de fecha, agrega y devuelve las columnas grupo y valor."""
-    # TODO Rol 2: reemplazar el valor del ejemeplo; la firma y las columnas de salida no cambian
-    return pd.DataFrame(columns=["grupo","valor"])
+    """Devuelve las columnas grupo y valor después de transformar y agregar."""
+    operaciones = {"suma": "sum", "promedio": "mean", "mediana": "median"}
+    if x not in df.columns:
+        raise ValueError(f"No existe la columna «{x}» para agrupar.")
+    if transformacion not in ("ninguna", "dia_semana", "mes", "anio"):
+        raise ValueError(f"Transformación de fecha desconocida: «{transformacion}».")
+    if agregacion not in operaciones and agregacion not in ("conteo", "ninguna"):
+        raise ValueError(f"Agregación desconocida: «{agregacion}».")
+    if top is not None and top < 0:
+        raise ValueError("El límite de categorías debe ser cero o un número positivo.")
+
+    grupo = df[x]
+    es_fecha = pd.api.types.is_datetime64_any_dtype(grupo)
+    if transformacion != "ninguna":
+        grupo = _transformar_fecha(grupo, transformacion)
+        es_fecha = True
+
+    datos = grupo.to_frame(name="grupo")
+    if agregacion != "conteo":
+        if y is None or y not in df.columns:
+            raise ValueError("Selecciona una columna de valores existente.")
+        if not pd.api.types.is_numeric_dtype(df[y]):
+            raise ValueError(f"La columna de valores «{y}» debe ser numérica.")
+        datos["valor"] = df[y]
+    datos = datos.dropna()
+
+    if agregacion == "ninguna":
+        tabla = datos
+    else:
+        grupos = datos.groupby("grupo", sort=False, observed=True)
+        if agregacion == "conteo":
+            valores = grupos.size()
+        else:
+            valores = grupos["valor"].agg(operaciones[agregacion])
+        tabla = valores.reset_index(name="valor")
+
+    if es_fecha:
+        tabla = tabla.sort_values("grupo", kind="stable")
+        if transformacion == "dia_semana":
+            dias = ("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+            tabla["grupo"] = tabla["grupo"].map(dict(enumerate(dias)))
+    else:
+        tabla = tabla.sort_values("valor", ascending=False, kind="stable")
+        if top is not None:
+            categorias = tabla["grupo"].drop_duplicates().head(top)
+            tabla = tabla.loc[tabla["grupo"].isin(categorias)]
+
+    return tabla.reset_index(drop=True)
+
+
+def _transformar_fecha(columna: pd.Series, transformacion: str) -> pd.Series:
+    """Obtiene el día de la semana, el mes o el año de cada fecha."""
+    mensaje = f"La columna «{columna.name}» debe contener fechas válidas."
+    if pd.api.types.is_numeric_dtype(columna):
+        raise ValueError(mensaje)
+
+    try:
+        fechas = pd.to_datetime(columna, errors="coerce", format="mixed")
+    except (TypeError, ValueError) as error:
+        raise ValueError(mensaje) from error
+    if fechas.isna().all() and columna.notna().any():
+        raise ValueError(mensaje)
+
+    if transformacion == "dia_semana":
+        return fechas.dt.dayofweek
+    if transformacion == "mes":
+        return fechas.dt.strftime("%Y-%m")
+    return fechas.dt.year.astype("Int64")
 
 # 3. Funciones de perfiles de dominio:
 
