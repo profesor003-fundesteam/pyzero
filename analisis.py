@@ -124,13 +124,13 @@ PERFILES = {
     },
 }
 
-def calcular_perfil(df: pd.Dataframe, perfil: str, roles:  dict[str, str]) -> dict:
+def calcular_perfil(df: pd.DataFrame, perfil: str, roles:  dict[str, str]) -> dict:
     """Función que calcula las métricas del perfil elegido sobre los datos de trabajo.
 
-    Devuelve el dicionario de métricas del perfil y las métricas opcionales valen None si falta su rol."""
+    Devuelve el diccionario de métricas del perfil y las métricas opcionales valen None si falta su rol."""
     return PERFILES[perfil]["calcular"](df, roles)
 
 def graficos_perfil(df: pd.DataFrame, perfil: str, roles: dict[str, str]) -> list[dict]:
-    """Función que calcula las métricas de los gráficos por perfil sobre los datos de trabajo."""
+    """Función que devuelve las especificaciones de los gráficos fijos del perfil elegido."""
     return PERFILES[perfil]["graficos"](df, roles)
 

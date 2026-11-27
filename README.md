@@ -65,8 +65,6 @@ TODO
 
 ## Fuentes de los datos
 
-## Fuentes de los datos
-
 El código de este repositorio usa la licencia MIT (archivo `LICENSE`). Cada dataset conserva su propia licencia.
 
 | Archivo | Fuente (Kaggle) | Autor | Licencia | Descargado | Cambios |
