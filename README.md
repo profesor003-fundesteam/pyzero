@@ -1,5 +1,3 @@
-TODO Grace: Total libertad de cambio
-
 # DataLizer
 
 Asistente de preparación y análisis de datasets con perfiles de dominio e IA.
@@ -79,3 +77,5 @@ Los datos se usan sin modificar su contenido. Los errores de origen (por ejemplo
 ## Decisiones
 
 Formato: fecha · decisión · motivo · quién decidió
+
+TODO Grace: total libertad de cambio
