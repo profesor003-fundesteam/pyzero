@@ -31,7 +31,7 @@ TODO
 
 - Rol 1 · Datos, pruebas e integración: Noel
 
-- Rol 2 · Análisis estadístico y perfiles: (nombre)
+- Rol 2 · Análisis estadístico y perfiles: Desiree
 
 - Rol 3 · Visualización, código e informe: (nombre)
 
