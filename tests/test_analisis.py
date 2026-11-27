@@ -2,6 +2,7 @@ import pandas as pd
 
 from analisis import PERFILES, agrupar, calcular_perfil
 
+# TODO(Noel): Documentar y probar
 
 def _df() -> pd.DataFrame:
     return pd.DataFrame({"categoria": ["A", "B", "A"], "monto": [10.0, 20.0, 30.0]})
